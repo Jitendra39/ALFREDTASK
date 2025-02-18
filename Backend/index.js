@@ -5,6 +5,7 @@ const addToDb = require('./Controllers/FlashCard');
 const Authenticated = require('./Middleware/Auth');
 const { default: LevelLogic } = require('./Controllers/LevelLogic');
 const path = require('path');
+const updateScore = require('./Controllers/updateScore');
 
 const app = express();
 const port = 3000;
@@ -29,7 +30,7 @@ connectToMongoDB("mongodb://localhost:27017/flashcard").then(() => {
 
 
 app.get('/flashcards', Authenticated, (req, res) => {
-  console.log("called", req.userData);
+  // console.log("called", req.userData);
   LevelLogic(req, res, () => {
     res.send('Hello This is the Flashcards App!');
   });
@@ -43,11 +44,23 @@ app.post('/flashcards', (req, res) => {
 });
 
 app.put('/flashcards/:id', (req, res) => {
+  console.log("called", req.body);
+  const {level, matchCount, id} = req.body;
+  updateScore(id, level, matchCount);
   res.send('Update a flashcard');
 });
 
 app.delete('/flashcards/:id', (req, res) => {
   res.send('Delete a flashcard');
+});
+
+app.get('/Images', (req, res) => {
+  const { add } = req.query;   
+  
+  const imageId = path.basename(add);
+  console.log("imageId", imageId);
+  const imagePath = path.join(__dirname, 'public', add);
+  res.sendFile(imagePath);
 });
 
 

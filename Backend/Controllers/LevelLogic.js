@@ -8,23 +8,40 @@ const __dirname = dirname(__filename);
 
 const LevelLogic = (req, res) => {
   try {
-    // Path to the animal images directory (ensure folder name matches your public folder structure)
+    const { level } = req.userData;
+
     const animalDir = path.join(__dirname, "../public/animal");
-    console.log("Animal directory:", animalDir);
-    
-    // Read image files with valid extensions
+
     const images = fs
       .readdirSync(animalDir)
       .filter((file) => /\.(jpg|jpeg|png|gif)$/i.test(file));
 
-    // Return a JSON array with IDs and URLs.
-    // The URL assumes you have set up Express to serve static files from the "public" folder.
-    const imageArray = images.map((image, index) => ({
+    console.log("Images:", images);
+
+    let imageCount;
+    switch (level) {
+      case 1:
+        imageCount = 4;
+        break;
+      case 2:
+        imageCount = 6;
+        break;
+      case 3:
+        imageCount = 9;
+        break;
+      default:
+        imageCount = 4; // Set a default image count for unknown levels
+    }
+
+    console.log("Image count:", imageCount);
+
+    const imageArray = images.slice(0, imageCount).map((image, index) => ({
       id: index + 1,
       url: `/animal/${image}`,
     }));
 
-    res.json(imageArray);
+
+    res.json({ imageArray, level: req.userData.level });
   } catch (error) {
     console.error("Error in LevelLogic:", error);
     res.status(500).send("Internal Server Error");
@@ -32,4 +49,3 @@ const LevelLogic = (req, res) => {
 };
 
 export default LevelLogic;
- 
