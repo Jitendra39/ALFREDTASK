@@ -28,7 +28,7 @@ const defaultFruits = [
 
 const FlipFrenzy = () => {
   const { id } = useParams();
-  const url = "http://localhost:3000";
+  const url = import.meta.env.VITE_BACKEND_PUBLISHABLE_KEY;
   const [level, setLevel] = useState(1);
   const [flippedIndices, setFlippedIndices] = useState([]);
   const [matchedIndices, setMatchedIndices] = useState([]);
@@ -269,7 +269,7 @@ const FlipFrenzy = () => {
 
       {/* --- Win Overlay --- */}
       {win && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-75">
+        <div className="absolute inset-0 flex flex-col items-center  justify-center bg-opacity-75">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}

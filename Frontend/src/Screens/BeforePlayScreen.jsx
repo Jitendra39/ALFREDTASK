@@ -5,8 +5,8 @@ import { useNavigate, useParams } from "react-router";
 import { GlobalContext } from "../Context/GlobalContext";
 
 function BeforePlayScreen() {
-  const backendUrl = "http://localhost:3000";
-
+  const backendUrl = import.meta.env.VITE_BACKEND_PUBLISHABLE_KEY;
+console.log(backendUrl)
   const { dispatch, popSound } = useContext(GlobalContext);
 
   const { id } = useParams();
