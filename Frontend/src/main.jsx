@@ -8,7 +8,9 @@ import Dashboard from "./Screens/Dashboard.jsx";
 // import Navbar from "./Components/Navbar.jsx";
 import PlayScreen from "./Screens/PlayScreen.jsx";
 import MainRoute from "./Screens/MainRoute.jsx";
-import LeitnerSystem from "./Screens/LeitnerSystem.jsx";
+ 
+import { GlobalProvider } from "./Context/GlobalContext.jsx";
+import BeforePlayScreen from "./Screens/BeforePlayScreen.jsx";
 // import { Toaster } from 'react-hot-toast';
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -19,18 +21,20 @@ if (!PUBLISHABLE_KEY) {
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <GlobalProvider>
       <BrowserRouter>
         <Routes>
        {/* <Toaster/> */}
           <Route path="/" element={<App />} />
           <Route path="/:id" element={<MainRoute/>}>
            <Route path="Dashboard" element={<Dashboard />}/>
-           <Route path="LeitnerSystem" element={<LeitnerSystem />}/>
-           <Route path="PlayScreen" element={<PlayScreen />}/>
-          
+           <Route path="FlipFrenzy" element={<BeforePlayScreen/>}/>
+           <Route path="Play" element={<PlayScreen />}/>
+           <Route path="LeitnerSystem" element={<BeforePlayScreen />}/>
           </Route>
         </Routes>
       </BrowserRouter>
+      </GlobalProvider>
     </ClerkProvider>
   </StrictMode>
 );

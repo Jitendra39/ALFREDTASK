@@ -1,31 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { motion } from "framer-motion";
 import Button from "../Components/Button";
 import { useNavigate, useParams } from "react-router";
-import toast from "react-hot-toast";
-import env from "react-dotenv";
+import { GlobalContext } from "../Context/GlobalContext";
 
-function LeitnerSystem() {
+function BeforePlayScreen() {
   const backendUrl = "http://localhost:3000";
-  console.log("backendUrl", {env});
+
+  const { dispatch, popSound } = useContext(GlobalContext);
 
   const { id } = useParams();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
-  const popSound = new Audio("/pop.mp3");
+
   const backgroundMusic = new Audio("/retro-music.mp3");
   const navigate = useNavigate();
 
   backgroundMusic.loop = true;
   backgroundMusic.volume = 0.3;
 
-  const togglePopup = () => {
-    popSound.play();
-    setIsPopupOpen(!isPopupOpen);
-  };
-
   const handlePlayNow = () => {
-    console.log("LeitnerSystem",  backendUrl);
     popSound.play();
     fetch(`${backendUrl}/flashcards/`, {
       method: "POST",
@@ -37,48 +30,42 @@ function LeitnerSystem() {
       }),
     })
       .then((res) => {
-        console.log(res);
-       
-    navigate(`/${id}/PlayScreen`);
+        //console.log(res);
 
+        navigate(`/${id}/Play`);
       })
       .catch((err) => {
-        console.log(err);
+        //console.log(err);
       });
   };
 
   const toggleMusic = () => {
-    console.log("isMusicPlaying", isMusicPlaying);
-    popSound.play();
-    if (isMusicPlaying) {
-      backgroundMusic.pause();
-    } else {
-      backgroundMusic.play();
-    }
-    setIsMusicPlaying(!isMusicPlaying);
+    dispatch({ type: "PLAY_MUSIC" });
   };
 
   return (
     <>
-          
-
       <div className="flex flex-col items-center justify-center h-screen">
         {/* Info Icon with Popup Trigger */}
         <div
           className="absolute top-4 left-4 w-16 h-16 bg-white cursor-pointer hover:bg-gray-300 rounded-full flex items-center justify-center shadow-lg border-4 border-purple-500"
-          onClick={togglePopup}
+          onClick={() => {
+            setIsPopupOpen(!isPopupOpen);
+            popSound.play();
+          }}
         >
           <span className="text-black text-xl font-bold">i</span>
         </div>
 
         {/* Popup */}
         {isPopupOpen && (
-          <div className="absolute top-20 left-4 p-4 w-64 bg-white shadow-lg border border-gray-400 rounded-lg text-black">
+          <div
+            onClick={() => popSound.play()}
+            className="absolute top-20 left-4 p-4 w-64 bg-white shadow-lg border border-gray-400 rounded-lg text-black"
+          >
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold">Information</h2>
-              <button onClick={togglePopup} className="text-lg font-bold">
-                ×
-              </button>
+              <button className="text-lg font-bold">×</button>
             </div>
             <p className="mt-2 text-sm">
               This is a Flash Card Memory Game using the Leitner System!
@@ -94,6 +81,7 @@ function LeitnerSystem() {
           <span className="text-black text-xl font-bold">🔊</span>
         </div>
 
+<div className="flex flex-col items-center justify-center gap-30 md:gap-10  h-full">
         <div className="relative flex items-center h-10 justify-center">
           <div className="flex flex-col w-[70vw] gap-2 justify-center items-center mx-auto text-center bg-transparent h-screen">
             <motion.p
@@ -105,12 +93,11 @@ function LeitnerSystem() {
             </motion.p>
           </div>
         </div>
-        <div className="mt-16">
+        <div >
           <Button text={" Start Now"} functions={handlePlayNow} />
         </div>
-        {/* <div className="mt-8 space-y-4">
- 
-      </div> */}
+
+      </div> 
       </div>
       {/* <motion.button
           whileTap={{ scale: 0.8 }}
@@ -123,4 +110,4 @@ function LeitnerSystem() {
   );
 }
 
-export default LeitnerSystem;
+export default BeforePlayScreen;

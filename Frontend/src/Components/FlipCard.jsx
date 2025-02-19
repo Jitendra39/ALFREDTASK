@@ -1,26 +1,27 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router";
- 
+
 const FlipCard = ({ title, description1, description2 }) => {
-    const { id } = useParams();
-    console.log(id);
-    const [isFlipped, setIsFlipped] = useState(false);
-    const Navigate = useNavigate();
-  
-    function handleClicked(){
-        if(title === "🧩 Flash Match: The Ultimate Memory Challenge! (Leitner System)"){
-            Navigate(`/${id}/LeitnerSystem`);
-        }else{
-           alert("This feature is coming soon!"); 
-        }
+  const { id } = useParams();
+  //console.log(id);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const Navigate = useNavigate();
+
+  function handleClicked() {
+    if (
+      title ===
+      "🧩 Flash Match: The Ultimate Memory Challenge! (Leitner System)"
+    ) {
+      Navigate(`/${id}/FlipFrenzy`);
+    } else {
+      alert("This feature is coming soon!");
     }
+  }
 
-
-    return (
-
-      <>
-      <motion.div 
+  return (
+    <>
+      <motion.div
         onClick={() => handleClicked()}
         className="relative w-full h-64 md:h-80 cursor-pointer"
         onHoverStart={() => setIsFlipped(true)}
@@ -54,11 +55,9 @@ const FlipCard = ({ title, description1, description2 }) => {
             {description2}
           </p>
         </motion.div>
-       
       </motion.div>
-      </>
-    );
-  };
+    </>
+  );
+};
 
-  
-  export default FlipCard;
+export default FlipCard;

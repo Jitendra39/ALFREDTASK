@@ -5,7 +5,7 @@ const MemoryCard = ({ image, isFlipped, onClick }) => {
       onClick={onClick}
       style={{ perspective: "1000px" }}
       className="cursor-pointer transform transition-transform duration-500
-                 w-16 h-20 sm:w-24 sm:h-32 md:w-32 md:h-40
+                 w-16 h-20 sm:w-24 sm:h-32 md:w-32 md:h-38
                  bg-blue-500 rounded-lg shadow-md flex items-center justify-center"
     >
       <div 
