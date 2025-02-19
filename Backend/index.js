@@ -7,13 +7,13 @@ const { default: LevelLogic } = require("./Controllers/LevelLogic");
 const path = require("path");
 require("dotenv").config();
 
-const updateScore = require("./Controllers/updateScore");
+const updateScore = require("./Controllers/UpdateScore");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors());
+app.use(cors({ origin: process.env.CORS_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
