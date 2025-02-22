@@ -22,7 +22,7 @@ export default function InputRapidRecall() {
       axios
         .post(`${backendUrl}/api/rapidrecall`, {
           id,
-          QCategory: category.toLowerCase(),
+          QCategory: topic ? topic : category.toLowerCase(),
           NoofQuestions: questions,
         })
         .then((response) => {
