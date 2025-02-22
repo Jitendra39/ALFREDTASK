@@ -1,13 +1,12 @@
-const mongoose = require('mongoose');
-const flashCardModule = require('../Models/flashcard');
- 
+const mongoose = require("mongoose");
+const FlipFrenzyModule = require("../Models/FlipFrenzy");
 
 const updateScore = async (userId, newLevel, score) => {
   try {
-    const flashcard = await flashCardModule.findOne({ userId });
+    const flashcard = await FlipFrenzyModule.findOne({ userId });
 
     if (!flashcard) {
-      throw new Error('Flashcard not found');
+      throw new Error("Flashcard not found");
     }
 
     flashcard.level = newLevel >= 3 ? 3 : newLevel + 1;
@@ -17,7 +16,7 @@ const updateScore = async (userId, newLevel, score) => {
     await flashcard.save();
     return flashcard;
   } catch (error) {
-    console.error('Error updating score:', error);
+    console.error("Error updating score:", error);
     throw error;
   }
 };

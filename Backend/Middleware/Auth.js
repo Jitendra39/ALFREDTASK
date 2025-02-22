@@ -1,4 +1,4 @@
-const flashCardModule = require("../Models/flashcard");
+const FlipFrenzyModule = require("../Models/FlipFrenzy");
 
 function Authenticated(req, res, next) {
   const { id } = req.query;
@@ -6,8 +6,7 @@ function Authenticated(req, res, next) {
   if (!id) {
     res.status(401).send("Unauthorized");
   }
-  flashCardModule
-    .findOne({ userId: id })
+  FlipFrenzyModule.findOne({ userId: id })
     .then((data) => {
       if (data) {
         req.userData = data;

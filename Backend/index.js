@@ -1,13 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const addToDb = require("./Controllers/FlashCard");
+const addToDb = require("./Controllers/FlipFrenzy");
 const Authenticated = require("./Middleware/Auth");
 const { default: LevelLogic } = require("./Controllers/LevelLogic");
 const path = require("path");
 require("dotenv").config();
 
 const updateScore = require("./Controllers/UpdateScore");
+const RapidRecall = require("./Controllers/RapidRecall");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -32,12 +33,15 @@ connectToMongoDB(mongoDBUrl)
     console.error("MongoDB connection error:", err);
   });
 
-// Flashcards routes
+ 
+
+// FlipFrenzy routes
 app.get("/flashcards", Authenticated, (req, res) => {
   LevelLogic(req, res, () => {
     res.send("Hello This is the Flashcards App!");
   });
 });
+
 
 app.post("/flashcards", (req, res) => {
   const { id } = req.body;
@@ -45,6 +49,7 @@ app.post("/flashcards", (req, res) => {
   addToDb(id);
   res.send("Create a new flashcard");
 });
+
 
 app.put("/flashcards/:id", (req, res) => {
   //console.log("called", req.body);
@@ -56,6 +61,43 @@ app.put("/flashcards/:id", (req, res) => {
 app.delete("/flashcards/:id", (req, res) => {
   res.send("Delete a flashcard");
 });
+
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
+
+
+
+
+// RapidRecall routes
+
+app.post("/api/rapidrecall",  (req, res) => {
+   RapidRecall.RapidRecall(req, res);
+});
+
+app.get("/api/rapidrecall", (req, res) => {
+  RapidRecall.updateScoreRapidRecall(req, res);
+  })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Serve images from MongoDB GridFS.
@@ -98,8 +140,4 @@ app.delete("/flashcards/:id", (req, res) => {
 //     console.error(err);
 //     res.status(500).send("Error retrieving file");
 //   }
-// });
-
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
+// })

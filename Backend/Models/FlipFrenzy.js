@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const flashcard = new mongoose.Schema({
+const FlipFrenzy = new mongoose.Schema({
   userId:{
     type: String,
     required: true,
@@ -16,6 +16,6 @@ const flashcard = new mongoose.Schema({
 },
 {timestamps: true});
 
-const flashCardModule = mongoose.model("flashcard", flashcard);
+const FlipFrenzyModule = mongoose.model("FlipFrenzy", FlipFrenzy);
 
-module.exports = flashCardModule;
+module.exports = FlipFrenzyModule;
