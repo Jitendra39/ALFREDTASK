@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import {  useLocation, useNavigate } from "react-router";
 import CardForRapidRecall from "../Components/CardForRapidRecall";
 import Button from "../Components/Button";
+import Arrow from "../Components/Arrow";
 
 export default function CardSwipe() {
   const [questions, setQuestions] = useState([]);
@@ -49,9 +50,14 @@ export default function CardSwipe() {
       >
         True or False Game
       </motion.h1>
-      <div className="mb-4 text-xl font-bold text-black">
+      <motion.div className="mb-4 text-xl font-bold text-black">
         Number of Cards left: {questions.length - score}
-      </div>
+      </motion.div>
+      <motion.div className="mb-4 text-xl font-bold text-black flex gap-40">
+      <Arrow text={"Left Swipe for False"} direction={"left"}/>
+     <Arrow text={"Right Swipe for True"} />
+      </motion.div>
+  
       {questions.length === 0 ? (
         <motion.div className="text-black text-lg">Loading questions...</motion.div>
       ) : currentIndex < questions.length ? (
@@ -69,19 +75,9 @@ export default function CardSwipe() {
             }
           }}
         >
-          {/* Top Dots */}
-          {/* <div className="flex justify-center p-4 gap-2">
-            <span className="bg-blue-500 inline-block w-4 h-4 rounded-full" />
-            <span className="bg-purple-500 inline-block w-4 h-4 rounded-full" />
-            <span className="bg-pink-500 inline-block w-4 h-4 rounded-full" />
-          </div> */}
+
 <CardForRapidRecall ques={questions.length} current={questions[currentIndex].question}/>
-          {/* Card Content */}
-          {/* <div className="card__content flex flex-col items-center justify-center h-full ">
-            <p className="text-lg text-black text-center font-semibold">
-              {questions[currentIndex].question}
-            </p>
-          </div> */}
+  
         </motion.div>
       ) : (
         <motion.div className="mt-8 text-black text-2xl font-semibold text-center">
