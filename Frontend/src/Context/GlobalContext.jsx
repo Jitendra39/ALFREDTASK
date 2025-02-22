@@ -1,9 +1,10 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useReducer, useState } from 'react';
 
 const initialState = {
   flashcards: [],
   currentFlashcard: null,
   isMusicPlaying: false,
+  Loader: '',
 };
 
 const GlobalContext = createContext(initialState);
@@ -19,6 +20,11 @@ const globalReducer = (state, action) => {
         ...state,
         isMusicPlaying: newMusicState,
       };
+    case 'Loading':
+      return {
+        ...state,
+        Loader: action.payload,
+      };
  
     default:
       return state;
@@ -29,6 +35,8 @@ const toggleMusic = (isMusicPlaying) => {
     backgroundMusic.pause();
   } else {
     backgroundMusic.play();
+    backgroundMusic.play();
+
   }
 };
 
@@ -37,11 +45,11 @@ const toggleMusic = (isMusicPlaying) => {
 
 const GlobalProvider = ({ children }) => {
 const popSound = new Audio("/pop.mp3");
-
+ 
   const [state, dispatch] = useReducer(globalReducer, initialState);
 
   return (
-    <GlobalContext.Provider value={{ state, dispatch, popSound }}>
+    <GlobalContext.Provider value={{ state, dispatch, popSound  }}>
       {children}
     </GlobalContext.Provider>
   );

@@ -11,6 +11,8 @@ import MainRoute from "./Screens/MainRoute.jsx";
  
 import { GlobalProvider } from "./Context/GlobalContext.jsx";
 import BeforePlayScreen from "./Screens/BeforePlayScreen.jsx";
+import InputRapidRecall from "./Screens/InputRapidRecall.jsx";
+ 
 // import { Toaster } from 'react-hot-toast';
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -26,11 +28,13 @@ createRoot(document.getElementById("root")).render(
         <Routes>
        {/* <Toaster/> */}
           <Route path="/" element={<App />} />
+          
+          
           <Route path="/:id" element={<MainRoute/>}>
            <Route path="Dashboard" element={<Dashboard />}/>
            <Route path="FlipFrenzy" element={<BeforePlayScreen/>}/>
            <Route path="Play" element={<PlayScreen />}/>
-           <Route path="LeitnerSystem" element={<BeforePlayScreen />}/>
+           <Route path="RapidRecall" element={<InputRapidRecall />}/>
           </Route>
         </Routes>
       </BrowserRouter>

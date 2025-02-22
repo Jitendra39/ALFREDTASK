@@ -14,8 +14,8 @@ const FlipCard = ({ title, description1, description2 }) => {
       "🧩 Flash Match: The Ultimate Memory Challenge! (Leitner System)"
     ) {
       Navigate(`/${id}/FlipFrenzy`);
-    } else {
-      alert("This feature is coming soon!");
+    }else{
+      Navigate(`/${id}/RapidRecall`);
     }
   }
 
