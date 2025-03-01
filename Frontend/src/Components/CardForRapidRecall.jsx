@@ -9,7 +9,7 @@ const CardForRapidRecall = ({ ques, current }) => {
       const container = containerRef.current;
       if (!container) return;
 
-      let newSize = 48; // Start with a large font size
+      let newSize = 28; // Start with a large font size
       container.style.fontSize = `${newSize}px`;
 
       // Reduce font size until content fits within the box
