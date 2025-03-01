@@ -1,143 +1,90 @@
-const express = require("express");
-const cors = require("cors");
-const mongoose = require("mongoose");
-const addToDb = require("./Controllers/FlipFrenzy");
-const Authenticated = require("./Middleware/Auth");
-const { default: LevelLogic } = require("./Controllers/LevelLogic");
-const path = require("path");
-require("dotenv").config();
+const cluster = require("cluster");
+const os = require("os");
 
-const updateScore = require("./Controllers/UpdateScore");
-const RapidRecall = require("./Controllers/RapidRecall");
+if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Master ${process.pid} is running. Forking ${numCPUs} workers...`);
+  
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+  
+  // Listen for dying workers and fork a new one.
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died. Forking a new worker...`);
+    cluster.fork();
+  });
+} else {
+  // Worker processes: run your Express server here.
+  const express = require("express");
+  const cors = require("cors");
+  const mongoose = require("mongoose");
+  const addToDb = require("./Controllers/FlipFrenzy");
+  const Authenticated = require("./Middleware/Auth");
+  const { default: LevelLogic } = require("./Controllers/LevelLogic");
+  const path = require("path");
+  require("dotenv").config();
 
-const app = express();
-const port = process.env.PORT || 3000;
+  const updateScore = require("./Controllers/UpdateScore");
+  const RapidRecall = require("./Controllers/RapidRecall");
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use(cors({ origin: process.env.CORS_ORIGIN }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+  const app = express();
+  const port = process.env.PORT || 3000;
 
-mongoose.set("strictQuery", true);
-async function connectToMongoDB(url) {
-  return mongoose.connect(url);
+  app.use(express.static(path.join(__dirname, "public")));
+  app.use(cors({ origin: process.env.CORS_ORIGIN }));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+
+  mongoose.set("strictQuery", true);
+  async function connectToMongoDB(url) {
+    return mongoose.connect(url);
+  }
+
+  const mongoDBUrl = process.env.MONGO_URL;
+
+  connectToMongoDB(mongoDBUrl)
+    .then(() => {
+      // MongoDB connected
+    })
+    .catch((err) => {
+      console.error("MongoDB connection error:", err);
+    });
+
+  // FlipFrenzy routes
+  app.get("/flashcards", Authenticated, (req, res) => {
+    LevelLogic(req, res, () => {
+      res.send("Hello This is the Flashcards App!");
+    });
+  });
+
+  app.post("/flashcards", (req, res) => {
+    const { id } = req.body;
+    addToDb(id);
+    res.send("Create a new flashcard");
+  });
+
+  app.put("/flashcards/:id", (req, res) => {
+    const { level, matchCount, id } = req.body;
+    updateScore(id, level, matchCount);
+    res.send("Update a flashcard");
+  });
+
+  app.delete("/flashcards/:id", (req, res) => {
+    res.send("Delete a flashcard");
+  });
+
+  // RapidRecall routes
+  app.post("/api/rapidrecall", (req, res) => {
+    RapidRecall.RapidRecall(req, res);
+  });
+
+  app.get("/api/rapidrecall", (req, res) => {
+    RapidRecall.updateScoreRapidRecall(req, res);
+  });
+
+  app.listen(port, () => {
+    console.log(`Worker ${process.pid}: Server is running on http://localhost:${port}`);
+  });
 }
-
-const mongoDBUrl = process.env.MONGO_URL;
-
-connectToMongoDB(mongoDBUrl)
-  .then(() => {
-    //console.log("MongoDB connected");
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:", err);
-  });
-
- 
-
-// FlipFrenzy routes
-app.get("/flashcards", Authenticated, (req, res) => {
-  LevelLogic(req, res, () => {
-    res.send("Hello This is the Flashcards App!");
-  });
-});
-
-
-app.post("/flashcards", (req, res) => {
-  const { id } = req.body;
-  //console.log("called", id);
-  addToDb(id);
-  res.send("Create a new flashcard");
-});
-
-
-app.put("/flashcards/:id", (req, res) => {
-  //console.log("called", req.body);
-  const { level, matchCount, id } = req.body;
-  updateScore(id, level, matchCount);
-  res.send("Update a flashcard");
-});
-
-app.delete("/flashcards/:id", (req, res) => {
-  res.send("Delete a flashcard");
-});
-
-
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
-
-
-
-
-
-// RapidRecall routes
-
-app.post("/api/rapidrecall",  (req, res) => {
-   RapidRecall.RapidRecall(req, res);
-});
-
-app.get("/api/rapidrecall", (req, res) => {
-  RapidRecall.updateScoreRapidRecall(req, res);
-  })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Serve images from MongoDB GridFS.
- * This route expects a query parameter "filename" with the full file path (if applicable).
- */
-// app.get('/Images', async (req, res) => {
-//   const { add } = req.query;
-// const filename = path.basename(add);
-
-//   if (!filename) {
-//     return res.status(400).send("Filename query parameter is required");
-//   }
-
-//   //console.log("Fetching image from GridFS:", filename);
-
-//   try {
-//     const db = mongoose.connection.db;
-//     const bucket = new mongoose.mongo.GridFSBucket(db, { bucketName: 'publicImages' });
-
-//     // Case-insensitive search for filename
-//     const cursor = bucket.find({ filename: { $regex: `^${filename}$`, $options: "i" } });
-//     const fileInfo = await cursor.toArray();
-
-//     if (!fileInfo || fileInfo.length === 0) {
-//       console.error(`File ${filename} not found in GridFS`);
-//       return res.status(404).send("File not found");
-//     }
-
-//     const storedFileName = fileInfo[0].filename;
-//     const downloadStream = bucket.openDownloadStreamByName(storedFileName);
-
-//     downloadStream.on('error', (err) => {
-//       console.error("Error downloading file:", err);
-//       res.status(404).send("File not found");
-//     });
-
-//     res.set('Content-Type', 'image/jpeg');
-//     downloadStream.pipe(res);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Error retrieving file");
-//   }
-// })
